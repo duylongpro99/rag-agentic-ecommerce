@@ -86,7 +86,7 @@ npm run dev
 │   ├── tools/           # Semantic search & filtering
 │   ├── database/        # Models & connection
 │   └── api/            # FastAPI endpoints
-├── frontend/web/        # Next.js chat interface
+├── web/        # Next.js chat interface
 ├── docker-compose.yml   # PostgreSQL + pgvector
 ├── ingest.py           # Embedding pipeline
 └── requirements.txt    # Python dependencies
