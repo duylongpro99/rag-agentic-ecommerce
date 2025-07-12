@@ -1,0 +1,1 @@
+- Update to new instructions to Readme.md if new services was add to project
