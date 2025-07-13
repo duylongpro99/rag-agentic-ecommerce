@@ -3,8 +3,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Optional
 import uuid
-from ..agents.orchestrator import OrchestratorAgent
-from ..database.connection import test_connection
+from agentic.agents.orchestrator import OrchestratorAgent
+from agentic.database.connection import test_connection
 
 app = FastAPI(title="E-commerce RAG Agent API", version="1.0.0")
 

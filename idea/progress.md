@@ -68,12 +68,12 @@
 - `.env.example` - Environment variables template
 - `docker-compose.yml` - PostgreSQL + pgvector setup
 - `init.sql` - Database initialization with sample data
-- `src/database/connection.py` - Database connection management
-- `src/database/models.py` - SQLAlchemy models
-- `src/tools/semantic_search.py` - Vector similarity search tool
-- `src/tools/structured_filter.py` - Database filtering tool
-- `src/agents/orchestrator.py` - Main LangGraph agent
-- `src/api/main.py` - FastAPI backend server
+- `agentic/database/connection.py` - Database connection management
+- `agentic/database/models.py` - SQLAlchemy models
+- `agentic/tools/semantic_search.py` - Vector similarity search tool
+- `agentic/tools/structured_filter.py` - Database filtering tool
+- `agentic/agents/orchestrator.py` - Main LangGraph agent
+- `agentic/api/main.py` - FastAPI backend server
 - `ingest.py` - ETL pipeline for embeddings
 
 ## Phase 4: Frontend Development ✅

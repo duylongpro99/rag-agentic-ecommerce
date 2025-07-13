@@ -3,8 +3,8 @@ from sqlalchemy.orm import Session
 from sqlalchemy import text
 import google.generativeai as genai
 import os
-from ..database.models import Product, ProductEmbedding
-from ..database.connection import get_db
+from agentic.database.models import Product, ProductEmbedding
+from agentic.database.connection import get_db
 
 class SemanticSearchTool:
     def __init__(self):

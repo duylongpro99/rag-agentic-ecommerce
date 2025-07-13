@@ -1,8 +1,8 @@
 from typing import List, Dict, Any, Optional
 from sqlalchemy.orm import Session
 from sqlalchemy import and_, or_
-from ..database.models import Product
-from ..database.connection import get_db
+from agentic.database.models import Product
+from agentic.database.connection import get_db
 
 class StructuredFilterTool:
     def __init__(self):

@@ -24,7 +24,7 @@ pip install -r requirements.txt
 
 3. **Install Node.js dependencies:**
 ```bash
-cd frontend/web
+cd web
 npm install
 ```
 
@@ -64,24 +64,25 @@ docker-compose up -d
 
 2. **Run Embeddings:**
 ```bash
+cd embedding
 python ingest.py
 ```
 
 3. **Start Backend:**
 ```bash
-python -m uvicorn src.api.main:app --reload
+python -m uvicorn agentic.api.main:app --reload
 ```
 
 4. **Start Frontend:**
 ```bash
-cd frontend/web
+cd web
 npm run dev
 ```
 
 ## 📁 Project Structure
 
 ```
-├── src/
+├── agentic/
 │   ├── agents/          # LangGraph orchestrator
 │   ├── tools/           # Semantic search & filtering
 │   ├── database/        # Models & connection

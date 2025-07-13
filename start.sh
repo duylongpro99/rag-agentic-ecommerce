@@ -18,17 +18,19 @@ sleep 10
 
 # Run embeddings ingestion
 echo "🔄 Running product embeddings ingestion..."
+cd embedding
 python ingest.py
+cd ..
 
 # Start FastAPI backend in background
 echo "🖥️  Starting FastAPI backend..."
 cd /Users/onedayin20902/personal/ecommerce-agentic-rag
-python -m uvicorn src.api.main:app --host 0.0.0.0 --port 8000 --reload &
+python -m uvicorn agentic.api.main:app --host 0.0.0.0 --port 8000 --reload &
 BACKEND_PID=$!
 
 # Start Next.js frontend
 echo "🌐 Starting Next.js frontend..."
-cd frontend/web
+cd web
 npm run dev &
 FRONTEND_PID=$!
 
