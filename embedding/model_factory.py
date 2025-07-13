@@ -5,6 +5,7 @@ import os
 import google.generativeai as genai
 from typing import List
 
+
 class EmbeddingModel:
     def get_embedding(self, text: str) -> List[float]:
         raise NotImplementedError
@@ -24,19 +25,20 @@ class GeminiEmbedding(EmbeddingModel):
 class VoyageEmbedding(EmbeddingModel):
     def __init__(self):
         import voyageai
-        self.client = voyageai.Client(api_key=os.getenv("VOYAGE_API_KEY"))
+        self.client = voyageai.Client(api_key=os.getenv("VOYAGE_AI_SECRET"))
     
     def get_embedding(self, text: str) -> List[float]:
+        
         result = self.client.embed([text], model="voyage-large-2")
         return result.embeddings[0]
 
 class JinaEmbedding(EmbeddingModel):
     def __init__(self):
-        import requests
-        self.api_key = os.getenv("JINA_API_KEY")
+        self.api_key = os.getenv("JINA_AI_SECRET")
         self.url = "https://api.jina.ai/v1/embeddings"
     
     def get_embedding(self, text: str) -> List[float]:
+        import requests
         headers = {
             "Content-Type": "application/json",
             "Authorization": f"Bearer {self.api_key}"

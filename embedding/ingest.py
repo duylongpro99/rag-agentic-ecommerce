@@ -5,7 +5,7 @@ import os
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
 from dotenv import load_dotenv
-from embedding.model_factory import create_embedding_model
+from model_factory import create_embedding_model
 
 load_dotenv(dotenv_path='../.env')
 
