@@ -1,0 +1,21 @@
+{
+  "name": "database-service",
+  "version": "1.0.0",
+  "scripts": {
+    "migrate:create": "prisma migrate dev --create-only",
+    "migrate": "prisma migrate dev",
+    "generate": "prisma generate",
+    "seed": "tsx seed.ts",
+    "reset": "prisma migrate reset --force",
+    "studio": "prisma studio"
+  },
+  "dependencies": {
+    "@prisma/client": "6.11.1",
+    "prisma": "6.11.1"
+  },
+  "devDependencies": {
+    "@types/node": "24.0.13",
+    "tsx": "^4.20.3",
+    "typescript": "^5.8.3"
+  }
+}

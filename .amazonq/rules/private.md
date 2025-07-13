@@ -1,0 +1,1 @@
+-   Consider the private keys should be read from .env file

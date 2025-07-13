@@ -1,0 +1,36 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Product {
+  id          Int      @id @default(autoincrement())
+  name        String   @db.VarChar(255)
+  brand       String?  @db.VarChar(100)
+  category    String?  @db.VarChar(100)
+  description String?  @db.Text
+  usage       String?  @db.Text
+  price       Decimal? @db.Decimal(10, 2)
+  imageUrl    String?  @map("image_url") @db.VarChar(500)
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  embeddings ProductEmbedding[]
+
+  @@map("products")
+}
+
+model ProductEmbedding {
+  id           Int      @id @default(autoincrement())
+  productId    Int      @map("product_id")
+  embedding    Unsupported("vector(768)") // pgvector embedding
+  documentText String   @map("document_text") @db.Text
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@map("product_embeddings")
+}

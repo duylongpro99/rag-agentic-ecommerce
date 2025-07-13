@@ -1,0 +1,5 @@
+-   All the llm and embedding model will use Gemini Flash from Google AI API key
+-   With database context, let using Postgres and pgvector for vector database. Start them all by using **Docker**
+-   The Frontend: Nextjs
+-   Backend: FastAPI 
+-   Agent/LLM Framework: Langraph
