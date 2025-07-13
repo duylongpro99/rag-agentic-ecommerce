@@ -2,10 +2,10 @@
 Embedding Service - Generate and store product embeddings
 """
 import os
-import google.generativeai as genai
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
 from dotenv import load_dotenv
+from embedding.model_factory import create_embedding_model
 
 load_dotenv(dotenv_path='../.env')
 
@@ -18,15 +18,12 @@ def create_document_text(product) -> str:
     """Create unified text document for embedding"""
     return f"Product: {product[1]}. Brand: {product[2]}. Category: {product[3]}. Description: {product[4]}. Ideal for: {product[5]}. Price: ${product[6]}"
 
+# Initialize embedding model
+embedding_model = create_embedding_model()
+
 def get_embedding(text: str) -> list:
-    """Generate embedding using Gemini"""
-    genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
-    result = genai.embed_content(
-        model="models/embedding-001",
-        content=text,
-        task_type="retrieval_document"
-    )
-    return result['embedding']
+    """Generate embedding using configured model"""
+    return embedding_model.get_embedding(text)
 
 def ingest_products():
     """Main ingestion function"""
