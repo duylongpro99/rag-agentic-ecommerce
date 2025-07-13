@@ -1,1 +1,2 @@
 -   Consider the private keys should be read from .env file
+-   Every schema in databse must has these columns: created_at, updated_at, deleted_at
