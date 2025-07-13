@@ -42,6 +42,20 @@ def ingest_products():
             
             if existing:
                 print(f"Embedding already exists for product {product[0]}: {product[1]}")
+                
+                # Check if status record exists, create if not
+                status_exists = db.execute(text(
+                    "SELECT id FROM product_embedding_status WHERE product_id = :product_id"
+                ), {"product_id": product[0]}).fetchone()
+                
+                if not status_exists:
+                    db.execute(text("""
+                        INSERT INTO product_embedding_status (product_id, status, updated_at)
+                        VALUES (:product_id, 'embedded', CURRENT_TIMESTAMP)
+                    """), {"product_id": product[0]})
+                    db.commit()
+                    print(f"✓ Created status record for existing product {product[0]}")
+                
                 continue
             
             # Create document text
@@ -64,6 +78,14 @@ def ingest_products():
                     "embedding": embedding_text,
                     "document_text": doc_text
                 })
+                
+                # Update or create embedding status
+                db.execute(text("""
+                    INSERT INTO product_embedding_status (product_id, status, updated_at)
+                    VALUES (:product_id, 'embedded', CURRENT_TIMESTAMP)
+                    ON CONFLICT (product_id) 
+                    DO UPDATE SET status = 'embedded', updated_at = CURRENT_TIMESTAMP
+                """), {"product_id": product[0]})
                 
                 db.commit()
                 print(f"✓ Embedded: {product[1]}")
