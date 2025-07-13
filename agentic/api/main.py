@@ -2,16 +2,27 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Optional
+from contextlib import asynccontextmanager
 import uuid
 from agentic.agents.orchestrator import OrchestratorAgent
 from agentic.database.connection import test_connection
 
-app = FastAPI(title="E-commerce RAG Agent API", version="1.0.0")
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup
+    if not test_connection():
+        raise Exception("Failed to connect to database")
+    print("API server started successfully!")
+    yield
+    # Shutdown
+    print("API server shutting down...")
+
+app = FastAPI(title="E-commerce RAG Agent API", version="1.0.0", lifespan=lifespan)
 
 # CORS middleware for frontend integration
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  # Next.js default port
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -31,12 +42,7 @@ class ChatResponse(BaseModel):
     response: str
     conversation_id: str
 
-@app.on_event("startup")
-async def startup_event():
-    """Test database connection on startup"""
-    if not test_connection():
-        raise Exception("Failed to connect to database")
-    print("API server started successfully!")
+
 
 @app.get("/")
 async def root():

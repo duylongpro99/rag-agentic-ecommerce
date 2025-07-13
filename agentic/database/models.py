@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, String, Text, DECIMAL, DateTime, ForeignKey
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
-from pgvector.sqlalchemy import Vector
+# from pgvector.sqlalchemy import Vector
 from .connection import Base
 
 class Product(Base):
@@ -24,7 +24,7 @@ class ProductEmbedding(Base):
     
     id = Column(Integer, primary_key=True, index=True)
     product_id = Column(Integer, ForeignKey("products.id", ondelete="CASCADE"))
-    embedding = Column(Vector(768))
+    embedding = Column(Text)  # Store as text for pgvector compatibility
     document_text = Column(Text)
     created_at = Column(DateTime, server_default=func.now())
     
