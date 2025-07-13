@@ -1,6 +1,9 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+import { Bot, Send, User } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
 
 interface Message {
   id: string;
@@ -95,17 +98,18 @@ export default function ChatInterface() {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-lg h-[600px] flex flex-col">
+    <div className="h-[600px] flex flex-col rounded-lg overflow-hidden">
       {/* Chat Messages */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+      <div className="flex-1 overflow-y-auto p-6 space-y-4">
         {messages.length === 0 && (
-          <div className="text-center text-gray-500 mt-8">
-            <p className="mb-4">👋 Hi! I'm your AI shopping assistant.</p>
-            <p className="text-sm">Try asking me:</p>
-            <div className="mt-2 space-y-1 text-sm">
-              <p>• "I need comfortable running shoes"</p>
-              <p>• "Show me Apple products under $500"</p>
-              <p>• "What headphones do you recommend?"</p>
+          <div className="text-center text-muted-foreground mt-8">
+            <Bot className="h-12 w-12 mx-auto mb-4 text-primary" />
+            <p className="mb-4 text-lg font-medium">Hi! I'm your AI shopping assistant.</p>
+            <p className="text-sm mb-4">Try asking me:</p>
+            <div className="space-y-2 text-sm">
+              <p className="bg-muted/50 rounded-lg px-3 py-2 inline-block">"I need comfortable running shoes"</p>
+              <p className="bg-muted/50 rounded-lg px-3 py-2 inline-block">"Show me Apple products under $500"</p>
+              <p className="bg-muted/50 rounded-lg px-3 py-2 inline-block">"What headphones do you recommend?"</p>
             </div>
           </div>
         )}
@@ -113,32 +117,56 @@ export default function ChatInterface() {
         {messages.map((message) => (
           <div
             key={message.id}
-            className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
+            className={cn(
+              "flex gap-3",
+              message.role === 'user' ? 'justify-end' : 'justify-start'
+            )}
           >
-            <div
-              className={`max-w-[80%] rounded-lg px-4 py-2 ${
-                message.role === 'user'
-                  ? 'bg-blue-500 text-white'
-                  : 'bg-gray-100 text-gray-900'
-              }`}
-            >
-              <p className="whitespace-pre-wrap">{message.content}</p>
-              <p className={`text-xs mt-1 ${
-                message.role === 'user' ? 'text-blue-100' : 'text-gray-500'
-              }`}>
+            {message.role === 'assistant' && (
+              <div className="flex-shrink-0">
+                <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                  <Bot className="h-4 w-4 text-primary" />
+                </div>
+              </div>
+            )}
+            
+            <div className={cn(
+              "max-w-[80%] rounded-lg px-4 py-3",
+              message.role === 'user'
+                ? 'bg-primary text-primary-foreground'
+                : 'bg-muted'
+            )}>
+              <p className="whitespace-pre-wrap text-sm">{message.content}</p>
+              <p className={cn(
+                "text-xs mt-2 opacity-70",
+                message.role === 'user' ? 'text-primary-foreground' : 'text-muted-foreground'
+              )}>
                 {message.timestamp.toLocaleTimeString()}
               </p>
             </div>
+            
+            {message.role === 'user' && (
+              <div className="flex-shrink-0">
+                <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                  <User className="h-4 w-4 text-primary" />
+                </div>
+              </div>
+            )}
           </div>
         ))}
         
         {isLoading && (
-          <div className="flex justify-start">
-            <div className="bg-gray-100 rounded-lg px-4 py-2">
+          <div className="flex gap-3 justify-start">
+            <div className="flex-shrink-0">
+              <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                <Bot className="h-4 w-4 text-primary" />
+              </div>
+            </div>
+            <div className="bg-muted rounded-lg px-4 py-3">
               <div className="flex space-x-1">
-                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                <div className="w-2 h-2 bg-muted-foreground/50 rounded-full animate-bounce"></div>
+                <div className="w-2 h-2 bg-muted-foreground/50 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                <div className="w-2 h-2 bg-muted-foreground/50 rounded-full" style={{ animationDelay: '0.2s' }}></div>
               </div>
             </div>
           </div>
@@ -148,24 +176,24 @@ export default function ChatInterface() {
       </div>
 
       {/* Input Area */}
-      <div className="border-t p-4">
-        <div className="flex space-x-2">
+      <div className="border-t bg-background p-4">
+        <div className="flex gap-2">
           <input
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyPress={handleKeyPress}
             placeholder="Ask me about products..."
-            className="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="flex-1 bg-background border border-input rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
             disabled={isLoading}
           />
-          <button
+          <Button
             onClick={sendMessage}
             disabled={!input.trim() || isLoading}
-            className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+            size="icon"
           >
-            Send
-          </button>
+            <Send className="h-4 w-4" />
+          </Button>
         </div>
       </div>
     </div>
