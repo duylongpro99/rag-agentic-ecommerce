@@ -6,6 +6,7 @@ from typing_extensions import Annotated, TypedDict
 import json
 from agentic.tools.semantic_search import SemanticSearchTool
 from agentic.tools.structured_filter import StructuredFilterTool
+from agentic.system_message import SYSTEM_MESSAGE
 
 class AgentState(TypedDict):
     messages: Annotated[list, add_messages]
@@ -118,18 +119,12 @@ class OrchestratorAgent:
         search_results = state["search_results"]
         
         response_prompt = f"""
-        You are a helpful e-commerce assistant. Based on the user's query and search results, 
-        provide a friendly and informative response.
+        {SYSTEM_MESSAGE}
         
         User Query: "{query}"
         Search Results: {search_results}
         
-        Provide a conversational response that:
-        1. Acknowledges the user's request
-        2. Presents the found products clearly
-        3. Offers additional help if needed
-        
-        Keep it concise but helpful.
+        Based on the search results, provide a response following your role as ProductFinder.
         """
         
         response = self.llm.invoke(response_prompt)
