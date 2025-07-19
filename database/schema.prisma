@@ -60,7 +60,7 @@ model User {
   name      String    @db.VarChar(255)
   subId     String    @unique @map("sub_id") @db.VarChar(255)
   orgId     String?   @map("org_id") @db.VarChar(255)
-  email     String    @db.VarChar(255)
+  email     String    @unique @db.VarChar(255)
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime  @updatedAt @map("updated_at")
   deletedAt DateTime? @map("deleted_at")

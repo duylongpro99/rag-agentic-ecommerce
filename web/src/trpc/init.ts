@@ -1,13 +1,13 @@
 import { prisma } from '@/server/prisma/client';
+import { auth } from '@clerk/nextjs/server';
 import { initTRPC, TRPCError } from '@trpc/server';
 import { cache } from 'react';
-import { auth } from '@clerk/nextjs/server';
 
 export const createTRPCContext = cache(async () => {
     /**
      * @see: https://trpc.io/docs/server/context
      */
-    return { auth: await auth() };
+    return { auth: await auth(), db: prisma };
 });
 
 export type Context = Awaited<ReturnType<typeof createTRPCContext>>;
@@ -42,6 +42,7 @@ const isAuthed = t.middleware(({ next, ctx }) => {
     }
     return next({
         ctx: {
+            db: prisma,
             auth: ctx.auth,
         },
     });

@@ -123,9 +123,22 @@
 - `web/src/app/(auth)/layout.tsx` - Auth layout
 - `web/src/lib/dal/user.dal.ts` - Data access layer for user operations
 
+## Phase 6: Error Handling & User Experience ✅
+
+### Step 12: Error Pages & Authentication Flow ✅
+- [x] Created error pages to handle application errors
+- [x] Implemented TRPC UNAUTHORIZED error detection
+- [x] Added sign-in redirection for authentication errors
+- [x] Improved user experience with clear error messages
+- [x] Added global error handling across the application
+
+## Additional Files Created:
+- `web/src/app/error.tsx` - Global error page
+- `web/src/app/(home)/error.tsx` - Home section error page
+
 ## Next Steps:
-- Phase 6: Testing & Deployment
-- Phase 7: Monitoring & Iteration
+- Phase 7: Testing & Deployment
+- Phase 8: Monitoring & Iteration
 
 ## 🚀 Ready to Launch!
 Run `./start.sh` to start the complete application.
