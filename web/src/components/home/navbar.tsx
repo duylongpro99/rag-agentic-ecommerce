@@ -11,6 +11,9 @@ import {
     MobileNavToggle,
     MobileNavMenu,
 } from '@/components/ui/resizable-navbar';
+import { trpc } from '@/trpc/client';
+import { useClerk, useUser } from '@clerk/nextjs';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 export function HomeNavbar() {
@@ -30,6 +33,16 @@ export function HomeNavbar() {
     ];
 
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const { user, isSignedIn } = useUser();
+    const { signOut } = useClerk();
+    const router = useRouter();
+    const logout = trpc.auth.logout.useMutation();
+
+    const handleLogout = async () => {
+        await logout.mutateAsync();
+        await signOut();
+        router.push('/');
+    };
 
     return (
         <div className="relative w-full">
@@ -39,12 +52,20 @@ export function HomeNavbar() {
                     <NavbarLogo />
                     <NavItems items={navItems} />
                     <div className="flex items-center gap-4">
-                        <NavbarButton href="/sign-in" variant="secondary">
-                            Login
-                        </NavbarButton>
-                        <NavbarButton href="/sign-up" variant="primary">
-                            Sign up
-                        </NavbarButton>
+                        {isSignedIn ? (
+                            <NavbarButton onClick={handleLogout} variant="primary">
+                                Logout
+                            </NavbarButton>
+                        ) : (
+                            <>
+                                <NavbarButton href="/sign-in" variant="secondary">
+                                    Login
+                                </NavbarButton>
+                                <NavbarButton href="/sign-up" variant="primary">
+                                    Sign up
+                                </NavbarButton>
+                            </>
+                        )}
                     </div>
                 </NavBody>
 
@@ -67,12 +88,27 @@ export function HomeNavbar() {
                             </a>
                         ))}
                         <div className="flex w-full flex-col gap-4">
-                            <NavbarButton href="sign-in" onClick={() => setIsMobileMenuOpen(false)} variant="primary" className="w-full">
-                                Login
-                            </NavbarButton>
-                            <NavbarButton href="sign-up" onClick={() => setIsMobileMenuOpen(false)} variant="primary" className="w-full">
-                                Sign up
-                            </NavbarButton>
+                            {isSignedIn ? (
+                                <NavbarButton 
+                                    onClick={() => {
+                                        handleLogout();
+                                        setIsMobileMenuOpen(false);
+                                    }} 
+                                    variant="primary" 
+                                    className="w-full"
+                                >
+                                    Logout
+                                </NavbarButton>
+                            ) : (
+                                <>
+                                    <NavbarButton href="/sign-in" onClick={() => setIsMobileMenuOpen(false)} variant="primary" className="w-full">
+                                        Login
+                                    </NavbarButton>
+                                    <NavbarButton href="/sign-up" onClick={() => setIsMobileMenuOpen(false)} variant="primary" className="w-full">
+                                        Sign up
+                                    </NavbarButton>
+                                </>
+                            )}
                         </div>
                     </MobileNavMenu>
                 </MobileNav>

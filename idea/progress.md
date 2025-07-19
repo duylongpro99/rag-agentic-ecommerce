@@ -136,9 +136,23 @@
 - `web/src/app/error.tsx` - Global error page
 - `web/src/app/(home)/error.tsx` - Home section error page
 
+## Phase 7: Authentication Enhancements ✅
+
+### Step 13: Logout Functionality & UI Improvements ✅
+- [x] Added logout endpoint to authRouter
+- [x] Updated HomeNavbar to conditionally show login/signup or logout buttons
+- [x] Implemented client-side logout with Clerk integration
+- [x] Improved user experience with dynamic navigation based on auth state
+- [x] Updated README with authentication features
+
+## Additional Files Modified:
+- `web/src/trpc/routers/auth.ts` - Added logout mutation
+- `web/src/components/home/navbar.tsx` - Updated to show conditional auth buttons
+- `README.md` - Updated with authentication features
+
 ## Next Steps:
-- Phase 7: Testing & Deployment
-- Phase 8: Monitoring & Iteration
+- Phase 8: Testing & Deployment
+- Phase 9: Monitoring & Iteration
 
 ## 🚀 Ready to Launch!
 Run `./start.sh` to start the complete application.

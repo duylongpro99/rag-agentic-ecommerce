@@ -1,6 +1,6 @@
 import { ClerkUser, userDal } from '@/lib/dal/user.dal';
 import { TRPCError } from '@trpc/server';
-import { createTRPCRouter, protectedProcedure } from '../init';
+import { baseProcedure, createTRPCRouter, protectedProcedure } from '../init';
 import jwt from 'jsonwebtoken';
 
 export const authRouter = createTRPCRouter({
@@ -31,5 +31,11 @@ export const authRouter = createTRPCRouter({
         }));
 
         return true;
+    }),
+    
+    logout: baseProcedure.mutation(async () => {
+        // The actual logout is handled by Clerk on the client side
+        // This endpoint is just for TRPC routing purposes
+        return { success: true };
     }),
 });

@@ -8,7 +8,7 @@ A conversational AI-powered product search system using RAG (Retrieval-Augmented
 - **Frontend**: Next.js + TypeScript + Tailwind CSS
 - **AI**: Google Gemini Flash + Embedding-001
 - **Database**: PostgreSQL with pgvector for semantic search
-- **Authentication**: Clerk for user authentication and management
+- **Authentication**: Clerk for user authentication and management with login, signup, and logout functionality
 
 ## 🚀 Quick Start
 
