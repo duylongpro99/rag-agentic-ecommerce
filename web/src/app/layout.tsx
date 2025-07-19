@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 
+import { ThemeProvider } from '@/components/theme-provider';
 import { ClerkProvider } from '@clerk/nextjs';
 
 export const metadata: Metadata = {
@@ -24,8 +25,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     return (
         <ClerkProvider publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY!}>
             <TRPCProvider>
-                <html lang="en">
-                    <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>{children}</body>
+                <html lang="en" suppressHydrationWarning>
+                    <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+                        <ThemeProvider attribute="class" defaultTheme="dark" disableTransitionOnChange enableSystem>
+                            {children}
+                        </ThemeProvider>
+                    </body>
                 </html>
             </TRPCProvider>
         </ClerkProvider>
