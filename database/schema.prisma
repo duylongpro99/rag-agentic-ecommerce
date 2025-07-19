@@ -1,10 +1,11 @@
 generator client {
-  provider = "prisma-client-js"
+  provider   = "prisma-client-js"
+  output     = "../web/node_modules/.prisma/client"
 }
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url      = env("GENERATED_DATABASE_URL")
 }
 
 model Product {
@@ -18,18 +19,18 @@ model Product {
   imageUrl    String?  @map("image_url") @db.VarChar(500)
   createdAt   DateTime @default(now()) @map("created_at")
 
-  embeddings ProductEmbedding[]
+  embeddings      ProductEmbedding[]
   embeddingStatus ProductEmbeddingStatus?
 
   @@map("products")
 }
 
 model ProductEmbedding {
-  id           Int      @id @default(autoincrement())
-  productId    Int      @map("product_id")
+  id           Int                        @id @default(autoincrement())
+  productId    Int                        @map("product_id")
   embedding    Unsupported("vector(768)") // pgvector embedding
-  documentText String   @map("document_text") @db.Text
-  createdAt    DateTime @default(now()) @map("created_at")
+  documentText String                     @map("document_text") @db.Text
+  createdAt    DateTime                   @default(now()) @map("created_at")
 
   product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 
@@ -55,13 +56,13 @@ model ProductEmbeddingStatus {
 }
 
 model User {
-  id        String   @id @default(uuid()) @db.Uuid
-  name      String   @db.VarChar(255)
-  subId     String   @unique @map("sub_id") @db.VarChar(255)
-  orgId     String?  @map("org_id") @db.VarChar(255)
-  email     String   @db.VarChar(255)
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  id        String    @id @default(uuid()) @db.Uuid
+  name      String    @db.VarChar(255)
+  subId     String    @unique @map("sub_id") @db.VarChar(255)
+  orgId     String?   @map("org_id") @db.VarChar(255)
+  email     String    @db.VarChar(255)
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
 
   @@map("users")
