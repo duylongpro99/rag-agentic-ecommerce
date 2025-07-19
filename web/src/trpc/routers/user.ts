@@ -7,8 +7,7 @@ export const userRouter = createTRPCRouter({
         .input(
             z.object({
                 id: z.string(),
-                firstName: z.string().nullable().optional(),
-                lastName: z.string().nullable().optional(),
+                name: z.string(),
                 email: z.string(),
             }),
         )
@@ -18,15 +17,14 @@ export const userRouter = createTRPCRouter({
             if (existingUser) {
                 return existingUser;
             }
-            
+
             // Create new user
             const user = await userDal.createUser({
                 id: input.id,
-                firstName: input.firstName,
-                lastName: input.lastName,
+                name: input.name,
                 email: input.email,
             });
-            
+
             return user;
         }),
 });
