@@ -150,9 +150,24 @@
 - `web/src/components/home/navbar.tsx` - Updated to show conditional auth buttons
 - `README.md` - Updated with authentication features
 
+## Phase 8: Conversation History ✅
+
+### Step 14: Conversation Persistence ✅
+- [x] Added Conversation and Message models to Prisma schema
+- [x] Created migration for conversation history tables
+- [x] Implemented relationship between User and Conversations
+- [x] Added support for conversation title, active status, and soft deletion
+- [x] Updated README with conversation history feature
+
+## Additional Files Modified:
+- `database/schema.prisma` - Added Conversation and Message models
+- `database/migrations/20250720015008_add_conversation_history/migration.sql` - Migration for conversation tables
+- `README.md` - Updated with conversation history feature
+- `database/README.md` - Updated with new models information
+
 ## Next Steps:
-- Phase 8: Testing & Deployment
-- Phase 9: Monitoring & Iteration
+- Phase 9: Testing & Deployment
+- Phase 10: Monitoring & Iteration
 
 ## 🚀 Ready to Launch!
 Run `./start.sh` to start the complete application.

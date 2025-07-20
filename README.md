@@ -9,6 +9,8 @@ A conversational AI-powered product search system using RAG (Retrieval-Augmented
 - **AI**: Google Gemini Flash + Embedding-001
 - **Database**: PostgreSQL with pgvector for semantic search
 - **Authentication**: Clerk for user authentication and management with login, signup, and logout functionality
+- **Conversation History**: Persistent storage of user-agent interactions for context retention and improved user experience
+- **Conversation History**: Persistent storage of user-agent interactions for context retention and improved user experience
 
 ## 🚀 Quick Start
 

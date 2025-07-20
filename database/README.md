@@ -37,3 +37,11 @@ npm run studio
 2. Install dependencies: `npm install`
 3. Run migrations: `npm run migrate`
 4. Seed data: `npm run seed`
+
+## Models
+
+- **Product**: E-commerce products with details
+- **ProductEmbedding**: Vector embeddings for semantic search
+- **User**: User authentication and profile information
+- **Conversation**: Chat sessions between users and the agentic system
+- **Message**: Individual messages within conversations
