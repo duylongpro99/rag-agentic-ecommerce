@@ -71,7 +71,7 @@ model User {
 }
 
 model Conversation {
-  id        Int       @id @default(autoincrement())
+  id        String    @id @default(uuid()) @db.Uuid
   userId    String    @map("user_id") @db.Uuid
   title     String    @db.VarChar(255)
   isActive  Boolean   @default(true) @map("is_active")
@@ -86,8 +86,8 @@ model Conversation {
 }
 
 model Message {
-  id             Int       @id @default(autoincrement())
-  conversationId Int       @map("conversation_id")
+  id             String    @id @default(uuid()) @db.Uuid
+  conversationId String    @map("conversation_id") @db.Uuid
   content        String    @db.Text
   role           String    @db.VarChar(50)
   createdAt      DateTime  @default(now()) @map("created_at")

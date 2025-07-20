@@ -1,6 +1,6 @@
+import { Vortex } from '@/components/ui/vortex';
 import { caller } from '@/trpc/server';
 import { ConversationView } from '../views/conversation.view';
-import { Vortex } from '@/components/ui/vortex';
 
 export default async function Page() {
     void (await caller.auth.session());
