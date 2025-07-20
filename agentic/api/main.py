@@ -1,11 +1,13 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from typing import Optional
+from typing import Optional, List
 from contextlib import asynccontextmanager
 import uuid
+from sqlalchemy.orm import Session
 from agentic.agents.orchestrator import OrchestratorAgent
-from agentic.database.connection import test_connection
+from agentic.database.connection import test_connection, get_db
+from agentic.database.models import Conversation, Message, User
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -36,11 +38,22 @@ sessions = {}
 
 class ChatRequest(BaseModel):
     message: str
-    conversation_id: Optional[str] = None
+    conversation_id: Optional[int] = None
+    user_id: str
 
 class ChatResponse(BaseModel):
     response: str
-    conversation_id: str
+    conversation_id: int
+
+class MessageModel(BaseModel):
+    role: str
+    content: str
+    created_at: Optional[str] = None
+
+class ConversationModel(BaseModel):
+    id: int
+    title: str
+    messages: List[MessageModel]
 
 
 
@@ -53,46 +66,115 @@ async def health_check():
     return {"status": "healthy", "database": "connected" if test_connection() else "disconnected"}
 
 @app.post("/chat", response_model=ChatResponse)
-async def chat_endpoint(request: ChatRequest):
+async def chat_endpoint(request: ChatRequest, db: Session = Depends(get_db)):
     """Main chat endpoint for conversational product search"""
     try:
-        # Generate or use existing conversation ID
-        conversation_id = request.conversation_id or str(uuid.uuid4())
+        # Get or create conversation
+        if request.conversation_id:
+            # Get existing conversation
+            conversation = db.query(Conversation).filter(
+                Conversation.id == request.conversation_id,
+                Conversation.user_id == request.user_id,
+                Conversation.is_active == True
+            ).first()
+            
+            if not conversation:
+                raise HTTPException(status_code=404, detail="Conversation not found")
+        else:
+            # Create new conversation with a title based on the first message
+            title = request.message[:50] + "..." if len(request.message) > 50 else request.message
+            conversation = Conversation(
+                user_id=request.user_id,
+                title=title,
+                is_active=True
+            )
+            db.add(conversation)
+            db.commit()
+            db.refresh(conversation)
         
-        # Initialize session if new
-        if conversation_id not in sessions:
-            sessions[conversation_id] = {"history": []}
-        
-        # Add user message to history
-        sessions[conversation_id]["history"].append({
-            "role": "user",
-            "content": request.message
-        })
+        # Add user message to database
+        user_message = Message(
+            conversation_id=conversation.id,
+            content=request.message,
+            role="user"
+        )
+        db.add(user_message)
+        db.commit()
         
         # Get agent response
         response = agent.chat(request.message)
         
-        # Add agent response to history
-        sessions[conversation_id]["history"].append({
-            "role": "assistant",
-            "content": response
-        })
+        # Add assistant message to database
+        assistant_message = Message(
+            conversation_id=conversation.id,
+            content=response,
+            role="assistant"
+        )
+        db.add(assistant_message)
+        db.commit()
         
         return ChatResponse(
             response=response,
-            conversation_id=conversation_id
+            conversation_id=conversation.id
         )
         
     except Exception as e:
+        db.rollback()
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.get("/conversations/{conversation_id}")
-async def get_conversation(conversation_id: str):
+@app.get("/conversations/{conversation_id}", response_model=ConversationModel)
+async def get_conversation(conversation_id: int, user_id: str, db: Session = Depends(get_db)):
     """Get conversation history"""
-    if conversation_id not in sessions:
+    conversation = db.query(Conversation).filter(
+        Conversation.id == conversation_id,
+        Conversation.user_id == user_id
+    ).first()
+    
+    if not conversation:
         raise HTTPException(status_code=404, detail="Conversation not found")
     
-    return sessions[conversation_id]
+    messages = db.query(Message).filter(
+        Message.conversation_id == conversation_id,
+        Message.deleted_at == None
+    ).order_by(Message.created_at).all()
+    
+    return ConversationModel(
+        id=conversation.id,
+        title=conversation.title,
+        messages=[MessageModel(
+            role=message.role,
+            content=message.content,
+            created_at=message.created_at.isoformat() if message.created_at else None
+        ) for message in messages]
+    )
+
+@app.get("/conversations", response_model=List[ConversationModel])
+async def list_conversations(user_id: str, db: Session = Depends(get_db)):
+    """List all conversations for a user"""
+    conversations = db.query(Conversation).filter(
+        Conversation.user_id == user_id,
+        Conversation.is_active == True,
+        Conversation.deleted_at == None
+    ).order_by(Conversation.updated_at.desc()).all()
+    
+    result = []
+    for conversation in conversations:
+        messages = db.query(Message).filter(
+            Message.conversation_id == conversation.id,
+            Message.deleted_at == None
+        ).order_by(Message.created_at).all()
+        
+        result.append(ConversationModel(
+            id=conversation.id,
+            title=conversation.title,
+            messages=[MessageModel(
+                role=message.role,
+                content=message.content,
+                created_at=message.created_at.isoformat() if message.created_at else None
+            ) for message in messages]
+        ))
+    
+    return result
 
 if __name__ == "__main__":
     import uvicorn

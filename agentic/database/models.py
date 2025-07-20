@@ -1,6 +1,7 @@
-from sqlalchemy import Column, Integer, String, Text, DECIMAL, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, String, Text, DECIMAL, DateTime, ForeignKey, Boolean
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
+import uuid
 # from pgvector.sqlalchemy import Vector
 from .connection import Base
 
@@ -29,3 +30,47 @@ class ProductEmbedding(Base):
     created_at = Column(DateTime, server_default=func.now())
     
     product = relationship("Product", back_populates="embeddings")
+
+
+class User(Base):
+    __tablename__ = "users"
+    
+    id = Column(String, primary_key=True, index=True)
+    name = Column(String(255), nullable=False)
+    sub_id = Column(String(255), unique=True)
+    org_id = Column(String(255), nullable=True)
+    email = Column(String(255), unique=True, nullable=False)
+    created_at = Column(DateTime, server_default=func.now())
+    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
+    deleted_at = Column(DateTime, nullable=True)
+    
+    conversations = relationship("Conversation", back_populates="user")
+
+
+class Conversation(Base):
+    __tablename__ = "conversations"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(String, ForeignKey("users.id"))
+    title = Column(String(255), nullable=False)
+    is_active = Column(Boolean, default=True)
+    created_at = Column(DateTime, server_default=func.now())
+    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
+    deleted_at = Column(DateTime, nullable=True)
+    
+    user = relationship("User", back_populates="conversations")
+    messages = relationship("Message", back_populates="conversation", cascade="all, delete-orphan")
+
+
+class Message(Base):
+    __tablename__ = "messages"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    conversation_id = Column(Integer, ForeignKey("conversations.id", ondelete="CASCADE"))
+    content = Column(Text, nullable=False)
+    role = Column(String(50), nullable=False)  # 'user' or 'assistant'
+    created_at = Column(DateTime, server_default=func.now())
+    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
+    deleted_at = Column(DateTime, nullable=True)
+    
+    conversation = relationship("Conversation", back_populates="messages")
