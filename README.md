@@ -5,7 +5,7 @@ A conversational AI-powered product search system using RAG (Retrieval-Augmented
 ## 🏗️ Architecture
 
 - **Backend**: FastAPI + LangGraph + PostgreSQL + pgvector
-- **Frontend**: Next.js + TypeScript + Tailwind CSS
+<!-- - **Frontend**: Next.js + TypeScript + Tailwind CSS -->
 - **AI**: Google Gemini Flash + Embedding-001
 - **Database**: PostgreSQL with pgvector for semantic search
 - **Authentication**: Clerk for user authentication and management with login, signup, and logout functionality
@@ -39,14 +39,14 @@ npm install
 This will:
 - Start PostgreSQL with pgvector
 - Run product embeddings ingestion
-- Start FastAPI backend (port 8000)
+- Start FastAPI backend (port 8010)
 - Start Next.js frontend (port 3000)
 
 ## 🔗 Access Points
 
 - **Chat Interface**: http://localhost:3000
-- **API Backend**: http://localhost:8000
-- **API Documentation**: http://localhost:8000/docs
+- **API Backend**: http://localhost:8010
+- **API Documentation**: http://localhost:8010/docs
 
 ## 💬 Example Queries
 

@@ -3,7 +3,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Optional, List
 from contextlib import asynccontextmanager
-import uuid
+import logging
+from agentic.utils.get_env import get_env
 from sqlalchemy.orm import Session
 from agentic.agents.orchestrator import OrchestratorAgent
 from agentic.database.connection import test_connection, get_db
@@ -12,6 +13,8 @@ from agentic.database.models import Conversation, Message, User
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup
+    runtime_env = get_env("RUNTIME_ENVIRONMENT")
+    print(f"Runtime: {runtime_env}")
     if not test_connection():
         raise Exception("Failed to connect to database")
     print("API server started successfully!")
@@ -38,7 +41,7 @@ sessions = {}
 
 class ChatRequest(BaseModel):
     message: str
-    conversation_id: Optional[int] = None
+    conversation_id: str
     user_id: str
 
 class ChatResponse(BaseModel):
@@ -93,25 +96,25 @@ async def chat_endpoint(request: ChatRequest, db: Session = Depends(get_db)):
             db.refresh(conversation)
         
         # Add user message to database
-        user_message = Message(
-            conversation_id=conversation.id,
-            content=request.message,
-            role="user"
-        )
-        db.add(user_message)
-        db.commit()
+        # user_message = Message(
+        #     conversation_id=conversation.id,
+        #     content=request.message,
+        #     role="user"
+        # )
+        # db.add(user_message)
+        # db.commit()
         
         # Get agent response
         response = agent.chat(request.message)
         
         # Add assistant message to database
-        assistant_message = Message(
-            conversation_id=conversation.id,
-            content=response,
-            role="assistant"
-        )
-        db.add(assistant_message)
-        db.commit()
+        # assistant_message = Message(
+        #     conversation_id=conversation.id,
+        #     content=response,
+        #     role="assistant"
+        # )
+        # db.add(assistant_message)
+        # db.commit()
         
         return ChatResponse(
             response=response,

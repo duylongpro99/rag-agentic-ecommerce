@@ -50,7 +50,7 @@ class User(Base):
 class Conversation(Base):
     __tablename__ = "conversations"
     
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(String, primary_key=True, index=True)
     user_id = Column(String, ForeignKey("users.id"))
     title = Column(String(255), nullable=False)
     is_active = Column(Boolean, default=True)
@@ -65,8 +65,8 @@ class Conversation(Base):
 class Message(Base):
     __tablename__ = "messages"
     
-    id = Column(Integer, primary_key=True, index=True)
-    conversation_id = Column(Integer, ForeignKey("conversations.id", ondelete="CASCADE"))
+    id = Column(String, primary_key=True, index=True)
+    conversation_id = Column(String, ForeignKey("conversations.id", ondelete="CASCADE"))
     content = Column(Text, nullable=False)
     role = Column(String(50), nullable=False)  # 'user' or 'assistant'
     created_at = Column(DateTime, server_default=func.now())
