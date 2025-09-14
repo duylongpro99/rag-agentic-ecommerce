@@ -1,10 +1,11 @@
 """
-Embedding Model Factory
+Embedding Factory
 """
-import os
-import google.generativeai as genai
 from typing import List
-
+from langchain_ollama import OllamaEmbeddings
+from factory.types import Model, Provider
+import google.generativeai as genai
+import os
 
 class EmbeddingModel:
     def get_embedding(self, text: str) -> List[float]:
@@ -50,6 +51,25 @@ class JinaEmbedding(EmbeddingModel):
         response = requests.post(self.url, headers=headers, json=data)
         return response.json()["data"][0]["embedding"]
 
+
+class OllamaEmbeddingModel(EmbeddingModel):
+    def __init__(self, provider: Provider = Provider.OLLAMA, model: Model = Model.QWEN3_8B):
+        self.provider = Provider.OLLAMA if provider is None else provider
+        self.model = Model.QWEN3_8B if model is None else model
+        self.embedding = self.get()
+
+    def get(self) -> OllamaEmbeddings:
+        if self.provider == Provider.OLLAMA:
+            return OllamaEmbeddings(
+                model=self.model,
+            )
+
+        return None
+    
+    def get_embedding(self, text):
+        vector = self.embedding.embed_query(text)
+        return vector
+
 def create_embedding_model() -> EmbeddingModel:
     """Factory function to create embedding model based on EMBEDDING_MODEL env var"""
     model_type = os.getenv("EMBEDDING_MODEL", "gemini").lower()
@@ -61,4 +81,5 @@ def create_embedding_model() -> EmbeddingModel:
     elif model_type == "jina":
         return JinaEmbedding()
     else:
-        raise ValueError(f"Unsupported embedding model: {model_type}")
+        print("Init Ollama model embedding")
+        return OllamaEmbeddingModel()

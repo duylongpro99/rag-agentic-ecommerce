@@ -28,7 +28,7 @@ model Product {
 model ProductEmbedding {
   id           Int                        @id @default(autoincrement())
   productId    Int                        @map("product_id")
-  embedding    Unsupported("vector(768)") // pgvector embedding
+  embedding    Unsupported("vector(4096)") // pgvector embedding
   documentText String                     @map("document_text") @db.Text
   createdAt    DateTime                   @default(now()) @map("created_at")
 

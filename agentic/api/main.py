@@ -9,6 +9,7 @@ from sqlalchemy.orm import Session
 from agentic.agents.orchestrator import OrchestratorAgent
 from agentic.database.connection import test_connection, get_db
 from agentic.database.models import Conversation, Message, User
+from uuid import UUID
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -41,12 +42,12 @@ sessions = {}
 
 class ChatRequest(BaseModel):
     message: str
-    conversation_id: str
-    user_id: str
+    conversation_id: UUID
+    user_id: UUID
 
 class ChatResponse(BaseModel):
     response: str
-    conversation_id: int
+    conversation_id: UUID
 
 class MessageModel(BaseModel):
     role: str
@@ -54,7 +55,7 @@ class MessageModel(BaseModel):
     created_at: Optional[str] = None
 
 class ConversationModel(BaseModel):
-    id: int
+    id: UUID
     title: str
     messages: List[MessageModel]
 
